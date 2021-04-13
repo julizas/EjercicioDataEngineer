@@ -1,0 +1,18 @@
+Ejercicio 1
+A)
+
+CREATE TABLE Data_Movimientos_todos AS
+    (SELECT Fecha, "Descripcion de Cliente", "Descripcion de Proveedor", "Descripcion de Producto", "Descripcion de Marca",
+	   Cantidad, Costo, Venta, "Precio Venta Unitario" - "Costo Unitario" as "Ganancia Neta"
+    FROM (
+	    SELECT DMO.fecha as Fecha, DC.descripcion as "Descripcion de Cliente", DP.descripcion as "Descripcion de Proveedor",
+		   DPRD.descripcion as "Descripcion de Producto", DMA.descripcion as "Descripcion de Marca",
+	   	   DMO.cantidad as Cantidad, DMO.costo as Costo, DMO.venta as Venta,
+		   DMO.costo / DMO.cantidad as "Costo Unitario", DMO.venta / DMO.cantidad as "Precio Venta Unitario"
+    	    FROM Data_Movimientos DMO 
+    	    INNER JOIN Data_Clientes DC ON DMO.cod_cliente = DC.cod_cliente
+	    INNER JOIN Data_Productos DPRD ON DMO.cod_prod = DPRD.cod_prod
+	    INNER JOIN Data_Proveedores DPRV ON DPRD.cod_proveedor = DPRV.cod_proveedor
+	    INNER JOIN Data_Marcas DMA ON DPRD.cod_marca = DMA.cod_marca
+	 )
+    );
