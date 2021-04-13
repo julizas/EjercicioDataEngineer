@@ -1,18 +1,42 @@
 Ejercicio 1
 A)
 
-CREATE TABLE Data_Movimientos_todos AS
+CREATE TABLE Data_Movimientos_Todos AS
     (SELECT Fecha, "Descripcion de Cliente", "Descripcion de Proveedor", "Descripcion de Producto", "Descripcion de Marca",
-	   Cantidad, Costo, Venta, "Precio Venta Unitario" - "Costo Unitario" as "Ganancia Neta"
+	   Cantidad, Costo, Venta, "Ganancia Neta"
     FROM (
-	    SELECT DMO.fecha as Fecha, DC.descripcion as "Descripcion de Cliente", DP.descripcion as "Descripcion de Proveedor",
-		   DPRD.descripcion as "Descripcion de Producto", DMA.descripcion as "Descripcion de Marca",
-	   	   DMO.cantidad as Cantidad, DMO.costo as Costo, DMO.venta as Venta,
-		   DMO.costo / DMO.cantidad as "Costo Unitario", DMO.venta / DMO.cantidad as "Precio Venta Unitario"
-    	    FROM Data_Movimientos DMO 
-    	    INNER JOIN Data_Clientes DC ON DMO.cod_cliente = DC.cod_cliente
-	    INNER JOIN Data_Productos DPRD ON DMO.cod_prod = DPRD.cod_prod
-	    INNER JOIN Data_Proveedores DPRV ON DPRD.cod_proveedor = DPRV.cod_proveedor
-	    INNER JOIN Data_Marcas DMA ON DPRD.cod_marca = DMA.cod_marca
-	 )
+	    SELECT *, ("Precio Venta Unitario" - "Costo Unitario") as "Ganancia Neta"
+    		FROM (
+	    	SELECT DMO.fecha as Fecha, DC.descripcion as "Descripcion de Cliente", DPRV.descripcion as "Descripcion de Proveedor",
+		       DPRD.descripcion as "Descripcion de Producto", DMA.descripcion as "Descripcion de Marca",
+	   	       DMO.cantidad as Cantidad, DMO.costo as Costo, DMO.venta as Venta,
+		       DMO.costo / DMO.cantidad as "Costo Unitario", (DMO.venta / DMO.cantidad) as "Precio Venta Unitario"
+    	    	FROM Data_Movimientos DMO 
+    	    	INNER JOIN Data_Clientes DC ON DMO.cod_cliente = DC.cod_cliente
+	    	INNER JOIN Data_Productos DPRD ON DMO.cod_prod = DPRD.cod_prod
+	    	INNER JOIN Data_Proveedores DPRV ON DPRD.cod_proveedor = DPRV.cod_proveedor
+	    	INNER JOIN Data_Marcas DMA ON DPRD.cod_marca = DMA.cod_marca
+	 	) temp_table
+    	) temp_table_ganancia_neta
     );
+
+
+
+B)
+SELECT DMA.cod_marca, DMA.descripcion
+FROM Data_Marcas DMA
+LEFT JOIN Data_Productos DP ON DMA.cod_marca = DP.cod_marca
+LEFT JOIN Data_Movimientos DMO ON DP.cod_prod = DMO.cod_prod
+WHERE DMO.cod_prod IS NULL
+
+
+
+C)
+SELECT Fecha, "Descripcion de Cliente", SUM("Ganancia Neta") AS "Ganancia Neta Acumulada"
+FROM Data_Movimientos_Todos DMT
+INNER JOIN Data_Clientes DC ON DMT."Descripcion de Cliente" = DC.descripcion
+WHERE DC.cod_cliente = "123456" AND DMT.Fecha = "2000-01-01"
+GROUP BY DC.cod_cliente, 
+	 DMT.Fecha
+ORDER BY DMT.Fecha DESC, DMT."Descripcion de Cliente" DESC
+LIMIT 7
