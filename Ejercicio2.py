@@ -46,3 +46,8 @@ for sublist in vec:
 #flat_list = [item.replace("n.a", "") for item in flat_list]
 str_list = list(filter(None, flat_list))
 ###############################################################################
+# Aclaracion:
+# Deberia de acomodar los registros que están "rotos" y agregarlos al csv.
+# Puedo seguir investigando el tema. Por ahora llegue a resolver lo que esta en
+# este script.
+###############################################################################
