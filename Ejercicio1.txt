@@ -1,4 +1,7 @@
 Ejercicio 1
+
+Aclaración: Al no haber usado nunca Redshift, realicé este ejercicio unicamente con SQL.
+
 A)
 
 CREATE TABLE Data_Movimientos_Todos AS
